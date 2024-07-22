@@ -2,7 +2,7 @@ use bevy::core_pipeline::bloom::BloomSettings;
 use bevy::pbr::{MAX_CASCADES_PER_LIGHT, MAX_DIRECTIONAL_LIGHTS};
 use bevy::prelude::*;
 use bevy::reflect::TypePath;
-use bevy::render::mesh::MeshVertexBufferLayout;
+use bevy::render::mesh::{MeshVertexBufferLayout, MeshVertexBufferLayoutRef};
 use bevy::render::render_resource::{
     AsBindGroup,
     Extent3d,
@@ -150,14 +150,16 @@ impl CameraTargets
     }
 }
 
-impl Material2d for PostProcessingMaterial {
-    fn fragment_shader() -> ShaderRef {
+impl Material2d for PostProcessingMaterial
+{
+    fn fragment_shader() -> ShaderRef
+    {
         "embedded://bevy_magic_light_2d/gi/shaders/gi_post_processing.wgsl".into()
     }
 
     fn specialize(
         descriptor: &mut RenderPipelineDescriptor,
-        _layout: &MeshVertexBufferLayout,
+        _layout: &MeshVertexBufferLayoutRef,
         _key: Material2dKey<Self>,
     ) -> Result<(), SpecializedMeshPipelineError>
     {
@@ -195,16 +197,16 @@ pub fn setup_post_processing_camera(
         target_sizes.primary_target_size.y,
     ));
 
-    meshes.insert(POST_PROCESSING_RECT.clone(), quad);
+    meshes.insert(&POST_PROCESSING_RECT, quad);
 
     *camera_targets = CameraTargets::create(&mut images, &target_sizes);
 
     let material = PostProcessingMaterial::create(&camera_targets, &gi_targets_wrapper);
-    materials.insert(POST_PROCESSING_MATERIAL.clone(), material);
+    materials.insert(&POST_PROCESSING_MATERIAL, material);
 
     // This specifies the layer used for the post processing camera, which
     // will be attached to the post processing camera and 2d quad.
-    let layer = RenderLayers::layer((RenderLayers::TOTAL_LAYERS - 1) as u8);
+    let layer = RenderLayers::layer(255);
 
     commands.spawn((
         PostProcessingQuad,

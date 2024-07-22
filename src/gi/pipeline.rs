@@ -4,13 +4,14 @@ use bevy::render::render_asset::{RenderAssetUsages, RenderAssets};
 use bevy::render::render_resource::*;
 use bevy::render::renderer::RenderDevice;
 use bevy::render::texture::{
+    GpuImage,
     ImageAddressMode,
     ImageFilterMode,
     ImageSampler,
     ImageSamplerDescriptor,
 };
 
-use crate::gi::pipeline_assets::{LightPassPipelineAssets, load_embedded_shader};
+use crate::gi::pipeline_assets::{load_embedded_shader, LightPassPipelineAssets};
 use crate::gi::resource::ComputedTargetSizes;
 use crate::gi::types_gpu::{
     GpuCameraParams,
@@ -44,17 +45,17 @@ pub struct GiTargetsWrapper
 #[derive(Clone)]
 pub struct GiTargets
 {
-    pub sdf_target:       Handle<Image>,
-    pub ss_probe_target:  Handle<Image>,
-    pub ss_bounce_target: Handle<Image>,
-    pub ss_blend_target:  Handle<Image>,
-    pub ss_filter_target: Handle<Image>,
-    pub ss_pose_target:   Handle<Image>,
+    pub sdf_target:       Handle<GpuImage>,
+    pub ss_probe_target:  Handle<GpuImage>,
+    pub ss_bounce_target: Handle<GpuImage>,
+    pub ss_blend_target:  Handle<GpuImage>,
+    pub ss_filter_target: Handle<GpuImage>,
+    pub ss_pose_target:   Handle<GpuImage>,
 }
 
 impl GiTargets
 {
-    pub fn create(images: &mut Assets<Image>, sizes: &ComputedTargetSizes) -> Self
+    pub fn create(images: &mut Assets<GpuImage>, sizes: &ComputedTargetSizes) -> Self
     {
         let sdf_tex = create_texture_2d(
             sizes.sdf_target_usize.into(),
@@ -184,7 +185,7 @@ pub struct LightPassPipeline
 pub fn system_queue_bind_groups(
     mut commands: Commands,
     pipeline: Res<LightPassPipeline>,
-    gpu_images: Res<RenderAssets<Image>>,
+    gpu_images: Res<RenderAssets<GpuImage>>,
     targets_wrapper: Res<GiTargetsWrapper>,
     gi_compute_assets: Res<LightPassPipelineAssets>,
     render_device: Res<RenderDevice>,

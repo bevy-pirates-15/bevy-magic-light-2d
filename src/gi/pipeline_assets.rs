@@ -1,9 +1,11 @@
+use std::path::Path;
+
+use bevy::asset::io::AssetSourceId;
+use bevy::asset::AssetPath;
 use bevy::prelude::*;
 use bevy::render::render_resource::{StorageBuffer, UniformBuffer};
 use bevy::render::renderer::{RenderDevice, RenderQueue};
 use bevy::render::Extract;
-use bevy::asset::{AssetPath, io::AssetSourceId};
-use std::path::Path;
 use rand::{thread_rng, Rng};
 
 use crate::gi::constants::GI_SCREEN_PROBE_SIZE;
@@ -43,7 +45,9 @@ pub(crate) fn system_load_embedded_shader_dependencies(
     embedded_shader_deps.loaded_shaders.push(load_embedded_shader(&asset_server, "gi_types.wgsl"));
 }
 
-pub(crate) fn load_embedded_shader(asset_server: &AssetServer, shader_file: &str) -> Handle<Shader> {
+pub(crate) fn load_embedded_shader(asset_server: &AssetServer, shader_file: &str)
+    -> Handle<Shader>
+{
     let source = AssetSourceId::from("embedded");
     let path = Path::new("bevy_magic_light_2d").join("gi/shaders/");
     asset_server.load(AssetPath::from_path(&path.join(shader_file)).with_source(&source))
@@ -160,7 +164,7 @@ pub fn system_extract_pipeline_assets(
     {
         if let Ok((camera, camera_global_transform)) = query_camera.get_single() {
             let camera_params = gpu_pipeline_assets.camera_params.get_mut();
-            let projection = camera.projection_matrix();
+            let projection = camera.clip_from_view();
             let inverse_projection = projection.inverse();
             let view = camera_global_transform.compute_matrix();
             let inverse_view = view.inverse();
@@ -209,9 +213,9 @@ pub fn system_extract_pipeline_assets(
         let light_pass_params = gpu_pipeline_assets.light_pass_params.get_mut();
         light_pass_params.skylight_color = Vec3::splat(0.0);
         for new_gi_state in query_skylight_light.iter() {
-            light_pass_params.skylight_color.x += new_gi_state.color.r() * new_gi_state.intensity;
-            light_pass_params.skylight_color.y += new_gi_state.color.g() * new_gi_state.intensity;
-            light_pass_params.skylight_color.z += new_gi_state.color.b() * new_gi_state.intensity;
+            light_pass_params.skylight_color.x += new_gi_state.color.to_srgba().red * new_gi_state.intensity;
+            light_pass_params.skylight_color.y += new_gi_state.color.to_srgba().green * new_gi_state.intensity;
+            light_pass_params.skylight_color.z += new_gi_state.color.to_srgba().blue * new_gi_state.intensity;
         }
     }
 
