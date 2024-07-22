@@ -45,17 +45,17 @@ pub struct GiTargetsWrapper
 #[derive(Clone)]
 pub struct GiTargets
 {
-    pub sdf_target:       Handle<GpuImage>,
-    pub ss_probe_target:  Handle<GpuImage>,
-    pub ss_bounce_target: Handle<GpuImage>,
-    pub ss_blend_target:  Handle<GpuImage>,
-    pub ss_filter_target: Handle<GpuImage>,
-    pub ss_pose_target:   Handle<GpuImage>,
+    pub sdf_target:       Handle<Image>,
+    pub ss_probe_target:  Handle<Image>,
+    pub ss_bounce_target: Handle<Image>,
+    pub ss_blend_target:  Handle<Image>,
+    pub ss_filter_target: Handle<Image>,
+    pub ss_pose_target:   Handle<Image>,
 }
 
 impl GiTargets
 {
-    pub fn create(images: &mut Assets<GpuImage>, sizes: &ComputedTargetSizes) -> Self
+    pub fn create(images: &mut Assets<Image>, sizes: &ComputedTargetSizes) -> Self
     {
         let sdf_tex = create_texture_2d(
             sizes.sdf_target_usize.into(),
@@ -95,12 +95,12 @@ impl GiTargets
         let ss_filter_target: Handle<Image> = Handle::weak_from_u128(8761232615172413412);
         let ss_pose_target: Handle<Image> = Handle::weak_from_u128(4728165084756128470);
 
-        images.insert(sdf_target.clone(), sdf_tex);
-        images.insert(ss_probe_target.clone(), ss_probe_tex);
-        images.insert(ss_bounce_target.clone(), ss_bounce_tex);
-        images.insert(ss_blend_target.clone(), ss_blend_tex);
-        images.insert(ss_filter_target.clone(), ss_filter_tex);
-        images.insert(ss_pose_target.clone(), ss_pose_tex);
+        images.insert(sdf_target.id(), sdf_tex);
+        images.insert(ss_probe_target.id(), ss_probe_tex);
+        images.insert(ss_bounce_target.id(), ss_bounce_tex);
+        images.insert(ss_blend_target.id(), ss_blend_tex);
+        images.insert(ss_filter_target.id(), ss_filter_tex);
+        images.insert(ss_pose_target.id(), ss_pose_tex);
 
         Self {
             sdf_target,

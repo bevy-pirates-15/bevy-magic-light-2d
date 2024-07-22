@@ -93,7 +93,7 @@ pub fn system_extract_pipeline_assets(
     res_light_settings:         Extract<Res<BevyMagicLight2DSettings>>,
     res_target_sizes:           Extract<Res<ComputedTargetSizes>>,
 
-    query_lights:               Extract<Query<(&GlobalTransform, &OmniLightSource2D, &InheritedVisibility, &ViewVisibility)>>,
+    query_lights:               Extract<Query<(&GlobalTransform, &OmniLightSource2D, &InheritedVisibility)>>,
     query_occluders:            Extract<Query<(&LightOccluder2D, &GlobalTransform, &Transform, &InheritedVisibility, &ViewVisibility)>>,
     query_camera:               Extract<Query<(&Camera, &GlobalTransform), With<FloorCamera>>>,
     query_masks:                Extract<Query<(&GlobalTransform, &SkylightMask2D)>>,
@@ -112,8 +112,9 @@ pub fn system_extract_pipeline_assets(
         let mut rng = thread_rng();
         light_sources.count = 0;
         light_sources.data.clear();
-        for (transform, light_source, hviz, vviz) in query_lights.iter() {
-            if hviz.get() && vviz.get() {
+
+        for (transform, light_source, hviz) in query_lights.iter() {
+            if hviz.get() {
                 light_sources.count += 1;
                 light_sources.data.push(GpuOmniLightSource::new(
                     OmniLightSource2D {
@@ -213,9 +214,10 @@ pub fn system_extract_pipeline_assets(
         let light_pass_params = gpu_pipeline_assets.light_pass_params.get_mut();
         light_pass_params.skylight_color = Vec3::splat(0.0);
         for new_gi_state in query_skylight_light.iter() {
-            light_pass_params.skylight_color.x += new_gi_state.color.to_srgba().red * new_gi_state.intensity;
-            light_pass_params.skylight_color.y += new_gi_state.color.to_srgba().green * new_gi_state.intensity;
-            light_pass_params.skylight_color.z += new_gi_state.color.to_srgba().blue * new_gi_state.intensity;
+            let srgba = new_gi_state.color.to_srgba();
+            light_pass_params.skylight_color.x += srgba.red * new_gi_state.intensity;
+            light_pass_params.skylight_color.y += srgba.green * new_gi_state.intensity;
+            light_pass_params.skylight_color.z += srgba.blue * new_gi_state.intensity;
         }
     }
 
