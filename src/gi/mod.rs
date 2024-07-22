@@ -20,9 +20,7 @@ use crate::gi::pipeline::{
 };
 use crate::gi::pipeline_assets::{
     system_extract_pipeline_assets,
-    system_load_embedded_shader_dependencies,
     system_prepare_pipeline_assets,
-    EmbeddedShaderDependencies,
     LightPassPipelineAssets,
 };
 use crate::gi::resource::ComputedTargetSizes;
@@ -141,7 +139,7 @@ pub fn handle_window_resize(
             ComputedTargetSizes::from_window(window, &res_plugin_config.target_scaling_params);
 
         assets_mesh.insert(
-            &POST_PROCESSING_RECT,
+            POST_PROCESSING_RECT.id(),
             Mesh::from(bevy::math::primitives::Rectangle::new(
                 res_target_sizes.primary_target_size.x,
                 res_target_sizes.primary_target_size.y,
@@ -149,7 +147,7 @@ pub fn handle_window_resize(
         );
 
         assets_material.insert(
-            &POST_PROCESSING_MATERIAL,
+            POST_PROCESSING_MATERIAL.id(),
             PostProcessingMaterial::create(&res_camera_targets, &res_gi_targets_wrapper),
         );
 

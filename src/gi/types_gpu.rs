@@ -1,5 +1,5 @@
-use bevy::color::ColorToComponents;
-use bevy::prelude::{Mat4, Vec2, Vec3, Vec4};
+use bevy::color::Srgba;
+use bevy::prelude::{ColorToComponents, Mat4, Vec2, Vec3, Vec4};
 use bevy::render::render_resource::ShaderType;
 
 use crate::gi::constants::GI_SCREEN_PROBE_SIZE;
