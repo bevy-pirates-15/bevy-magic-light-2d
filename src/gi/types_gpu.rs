@@ -1,4 +1,3 @@
-use bevy::color::Srgba;
 use bevy::prelude::{ColorToComponents, Mat4, Vec2, Vec3, Vec4};
 use bevy::render::render_resource::ShaderType;
 

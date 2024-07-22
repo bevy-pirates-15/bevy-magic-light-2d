@@ -154,7 +154,7 @@ impl Material2d for PostProcessingMaterial
 {
     fn fragment_shader() -> ShaderRef
     {
-        "shaders/gi_post_processing.wgsl".into()
+        "embedded://bevy_magic_light_2d/gi/shaders/gi_post_processing.wgsl".into()
     }
 
     fn specialize(
@@ -206,7 +206,7 @@ pub fn setup_post_processing_camera(
 
     // This specifies the layer used for the post processing camera, which
     // will be attached to the post processing camera and 2d quad.
-    let layer = RenderLayers::layer(255);
+    let layer = RenderLayers::layer(31);
 
     commands.spawn((
         PostProcessingQuad,

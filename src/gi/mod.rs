@@ -20,7 +20,9 @@ use crate::gi::pipeline::{
 };
 use crate::gi::pipeline_assets::{
     system_extract_pipeline_assets,
+    system_load_embedded_shader_dependencies,
     system_prepare_pipeline_assets,
+    EmbeddedShaderDependencies,
     LightPassPipelineAssets,
 };
 use crate::gi::resource::ComputedTargetSizes;
